@@ -42,7 +42,7 @@ function onclickBtn () {
     updateTimer(coverTime);  
 
     if (deltaTime <= 0) {
-      clearInterval();
+      clearInterval(timerId);
       refs.btnStart.disabled = false;
       refs.timerPicker.disabled = false;
       return;
