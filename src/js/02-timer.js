@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
+import Notiflix from "notiflix";
 import '../css/common.css';
 
 const refs = {
@@ -20,7 +21,7 @@ const options = {
     onClose(selectedDates) {      
       // console.log(selectedDates[0]);
       if (selectedDates[0] < Date.now()) {
-        window.alert("Please choose a date in the future");
+        Notiflix.Notify.info('Please choose a date in the future');
         return;
       } refs.btnStart.disabled = false;
     },
@@ -39,13 +40,15 @@ function onclickBtn () {
     // console.log(deltaTime);
     const coverTime = convertMs(deltaTime);
     updateTimer(coverTime);  
+
+    if (deltaTime <= 0) {
+      clearInterval();
+      refs.btnStart.disabled = false;
+      refs.timerPicker.disabled = false;
+      return;
+    };
 }, 1000);
 
-  if (calendars.selectedDates[0].getTime - Date.now() <= 0) {
-    clearInterval(timerId);
-    refs.btnStart.disabled = false;
-    return;
-  };
 };
 
 function updateTimer({days, hours, minutes, seconds}) {
