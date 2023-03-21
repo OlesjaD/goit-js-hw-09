@@ -4,37 +4,41 @@ const formRef = document.querySelector('.form');
 
 formRef.addEventListener('submit', onFormSubmit);
 
+
+
 function onFormSubmit (ev) {
   ev.preventDefault();
-  let position = 0;
+ 
   let delay = Number(ev.target.delay.value);
   const step = Number(ev.target.step.value);
   const amount = Number(ev.target.amount.value);
 
-  setTimeout(() => {
-    const timerId = setInterval(() => {
-      if (amount === position) {
-        clearInterval(timerId);
-      } else {
-        position +=1;
-        createPromise(position, delay)
-          .then(({ position, delay }) => {
-            Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-          })
-          .catch(({ position, delay }) => {
-            Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-          });
-      }
-    },delay += step);
-  }, delay);
-};
+  let position = 0;
+  let readyTime = delay;
+  
+  for (let i = 1; i <= amount; i+=1) {
+    position =i;
+        
+    createPromise(position, readyTime)
+    .then(({ position, delay }) => {
+      Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+    })
+    .catch(({ position, delay }) => {
+      Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+    });
+    readyTime += step;
+  };
+}
 
 function createPromise(position, delay) {
+  return new Promise((resolve, reject) =>{
+    setTimeout (() =>{
   const shouldResolve = Math.random() > 0.3;
-  const value = { position, delay };
   if (shouldResolve) {
-    return Promise.resolve(value);
+    resolve({ position, delay });
   } else {
-    return Promise.reject(value);
+    reject({ position, delay });
   }
+}, delay);
+})
 }
